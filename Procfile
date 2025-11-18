@@ -1,1 +1,1 @@
-web: gunicorn --worker-tmp-dir /dev/shm sales_api.wsgi:application
+web: gunicorn sales_api.wsgi:application --worker-tmp-dir /dev/shm --bind 0.0.0.0:8080
