@@ -1,0 +1,32 @@
+name: sales-api
+region: nyc
+services:
+  - name: web
+    github:
+      repo: Ogujor1/new-sales-api
+      branch: main
+      deploy_on_push: true
+    build_command: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput
+    run_command: gunicorn --worker-tmp-dir /dev/shm sales_api.wsgi:application
+    environment_slug: python
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    http_port: 8080
+    envs:
+      - key: SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: DEBUG
+        value: "False"
+        scope: RUN_TIME
+      - key: ALLOWED_HOSTS
+        value: "${APP_DOMAIN}"
+        scope: RUN_TIME
+      - key: DJANGO_SETTINGS_MODULE
+        value: "sales_api.settings"
+        scope: RUN_TIME
+databases:
+  - name: db
+    engine: PG
+    production: false
+    cluster_name: sales-api-db
